@@ -1,5 +1,3 @@
-
-
 // Initialize Firebase
 var config = {
 	apiKey: "AIzaSyAETKprmQY34jnFYjh5wMrbXabyAF4uLdQ",
@@ -15,7 +13,7 @@ var dataRef = firebase.database();
 // Initial Values
 var trainName = "";
 var destination = "";
-var trainTime = 0;
+var firstTrainTime = 0;
 var frequency = "";
 
 
@@ -25,7 +23,7 @@ $("#addTrainBtn").on("click", function() {
 	// Code in the logic for storing and retrieving the most recent user.
 	var trainName = $('#trainName').val().trim();
 	var destination = $('#destination').val().trim();
-	var trainTime = $('#trainTime').val().trim();
+	var firstTrainTime = $('#firstTrainTime').val().trim();
 	var frequency = $('#frequency').val().trim();
 
 
@@ -33,7 +31,7 @@ $("#addTrainBtn").on("click", function() {
 	dataRef.ref().push({
 		trainName: trainName,
 		destination: destination,
-		trainTime: trainTime,
+		firstTrainTime: firstTrainTime,
 		frequency: frequency,
 		dateAdded: firebase.database.ServerValue.TIMESTAMP
 	});
@@ -46,12 +44,11 @@ dataRef.ref().on("child_added", function(childSnapshot,value) {
 	// Log everything that's coming out of snapshot
 	console.log(childSnapshot.val().trainName);
 	console.log(childSnapshot.val().destination);
-	console.log(childSnapshot.val().trainTime);
+	console.log(childSnapshot.val().firstTrainTime);
 	console.log(childSnapshot.val().frequency);
-	console.log(childSnapshot.val().joinDate);
 
 	// time for the first train
-	var startingTime = moment(firstTrain, 'hh:mm');
+	var startingTime = moment(firstTrainTime, 'hh:mm');
 	console.log('first time is: ' + moment(startingTime).format('hh:mm'));
 
 	//current time for the time 
@@ -63,7 +60,7 @@ dataRef.ref().on("child_added", function(childSnapshot,value) {
 	console.log("difference in startingTime and currentTime: " + differentTime);
 
 	// mathematical equation
-	var remaindingTime = difference % frequency;
+	var remaindingTime = differentTime % frequency;
 	console.log('The remaining time is: ' + remaindingTime);
 
 	//how far it is
@@ -74,7 +71,7 @@ dataRef.ref().on("child_added", function(childSnapshot,value) {
 	var upcomingTrain = moment().add(timeAway, "minutes");
 	console.log("Arrival Time: " + moment(upcomingTrain).format('hh:mm'));
 
-	$('.trainInformation').push("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + moment(upcomingTrain).format("hh:mm") + "</td><td>" + timeAway + "</td></tr>");
+	$('table').append("<tr><td>" + childSnapshot.val().trainName + "</td><td>" + childSnapshot.val().destination + "</td><td>" + childSnapshot.val().frequency + "</td><td>" + moment(upcomingTrain).format("hh:mm") + "</td><td>" + timeAway + "</td></tr>");
 
 
 // Handle the errors
